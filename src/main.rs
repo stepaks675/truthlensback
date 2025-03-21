@@ -47,7 +47,7 @@ async fn main() {
     let app = Router::new()         
         .route("/zklens", post(process))
 		.route("/zklens", options(|| async { "" }))
-		.route("/ping", get(ping)
+		.route("/ping", get(ping))
 		.layer(cors);
 
 	let port = std::env::var("PORT")
