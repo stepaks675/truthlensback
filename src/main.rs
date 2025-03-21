@@ -7,7 +7,6 @@ use tower_http::cors::{CorsLayer, Any};
 use std::net::SocketAddr;
 use serde::{Deserialize, Serialize};
 use sp1_sdk::{include_elf, ProverClient, SP1Stdin};
-use serde_json;
 
 const ELF: &[u8] = include_elf!("truthlens");
 
@@ -35,6 +34,10 @@ async fn process(Json (images):Json<ImageRequest>) -> Json<Response> {
 	return Json(Response { score: score });
 }
 
+async fn ping() -> &'static str {
+    "pong"
+}
+
 #[tokio::main]
 async fn main() {
 	let cors = CorsLayer::new()
@@ -42,11 +45,13 @@ async fn main() {
     .allow_methods(Any)
     .allow_headers(Any);
     let app = Router::new()         
-        .route("/zklens", post(process)) 
+        .route("/zklens", post(process))
+		.route("/zklens", options(|| async { "" }))
+		.route("/ping", get(ping)
 		.layer(cors);
 
 	let port = std::env::var("PORT")
-        .unwrap_or_else(|_| "3000".to_string())
+        .unwrap_or_else(|_| "10000".to_string())
         .parse::<u16>()
         .expect("PORT должен быть числом");
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
