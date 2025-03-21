@@ -22,14 +22,33 @@ struct Response {
 
 async fn process(Json (images):Json<ImageRequest>) -> Json<Response> {
 	
-    let mut stdin = SP1Stdin::new();
-    stdin.write(&images.selectedImages);
+    //let mut stdin = SP1Stdin::new();
+    //stdin.write(&images.selectedImages);
    
-    let client = ProverClient::from_env();
-    let (pk, _vk) = client.setup(ELF);
+    //let client = ProverClient::from_env();
+    //let (pk, _vk) = client.setup(ELF);
 	
-	let proof = client.prove(&pk, &stdin).run().expect("proof generation failed");
-	let score = hex::encode(proof.public_values);
+	//let proof = client.prove(&pk, &stdin).run().expect("proof generation failed");
+	//let score = hex::encode(proof.public_values);
+	
+	let max_score = 21;
+	let input = images.selectedImages ;
+	let key = "011011100010110100000";
+    
+    let mut score :i32 = max_score;
+    
+    for (input_char, key_char) in input.chars().zip(key.chars()) {
+        if input_char != key_char {
+            score = score.saturating_sub(1);
+        }
+    }
+    
+    let input_len = input.chars().count();
+    let key_len = key.chars().count();
+    
+    if input_len < key_len {
+        score = -1
+    }
 	
 	return Json(Response { score: score });
 }
