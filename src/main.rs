@@ -3,7 +3,6 @@ use axum::{
     Router,
     Json,
 };
-use rlimit::{Resource, setrlimit};
 use tower_http::cors::{CorsLayer, Any};
 use std::net::SocketAddr;
 use serde::{Deserialize, Serialize};
@@ -41,9 +40,6 @@ async fn ping() -> &'static str {
 
 #[tokio::main]
 async fn main() {
-	let limit: u64 = 450 * 1024 * 1024; // 400MB
-    setrlimit(Resource::RLIMIT_RSS, limit, limit).expect("Не удалось установить лимит");
-	
 	let cors = CorsLayer::new()
     .allow_origin(Any)
     .allow_methods(Any)
