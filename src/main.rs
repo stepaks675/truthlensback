@@ -17,7 +17,7 @@ struct ImageRequest {
 
 #[derive(Serialize)]
 struct Response {
-    score: String,
+    score: u32,
 }
 
 async fn process(Json (images):Json<ImageRequest>) -> Json<Response> {
